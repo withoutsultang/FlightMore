@@ -47,6 +47,7 @@ def extract_flight_data(flight, departure_date):
     flight_time = timedelta(hours=hours, minutes=minutes)
 
     return {
+        "flight_number": "",
         "airline": flight_airline,
         "arrival_airport": arrival_airport,
         "arrival_time": flight_arrival_time,
@@ -81,8 +82,8 @@ def main():
 
     departures = 'ICN'
     arrivals = 'TYO'
-    departure_date = '20240618'
-    arrival_date = '20240620'
+    departure_date = '20240918'
+    arrival_date = '20240920'
     adult = 1
     child = 0
 
@@ -92,17 +93,8 @@ def main():
 
     try:
         flight_data = crawl_flight_data(driver, url, departure_date, db)
-        for data in flight_data:
-            db.insert_flight_data(
-                "",
-                data["airline"],
-                data["arrival_airport"],
-                data["arrival_time"],
-                data["departure_airport"],
-                data["departure_time"],
-                data["flight_time"],
-                data["price"]
-            )
+        if flight_data:
+            db.insert_flight_data_batch(flight_data)
     except Exception as e:
         print(f"오류 발생: {e}")
     finally:

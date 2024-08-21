@@ -17,14 +17,12 @@ class Database:
     def insert_flight_data_batch(self, flight_data_batch):
         insert_query = '''
         INSERT INTO fm_flight (flight_number, flight_airline, flight_arrival, flight_arrival_time, flight_departure, flight_departure_date, flight_time, flight_price)
-        VALUES %s
+        VALUES (%(flight_number)s, %(airline)s, %(arrival_airport)s, %(arrival_time)s, %(departure_airport)s, %(departure_time)s, %(flight_time)s, %(price)s)
         '''
-        records = [(data['flight_number'], data['airline'], data['arrival_airport'], data['arrival_time'],
-                    data['departure_airport'], data['departure_time'], data['flight_time'], data['price'])
-                   for data in flight_data_batch]
+
         with self.pool.connection() as conn:
             with conn.cursor() as cur:
-                psycopg.extras.execute_values(cur, insert_query, records)
+                cur.executemany(insert_query, flight_data_batch)
             conn.commit()
 
     def is_duplicate(self, flight_airline, flight_arrival, flight_arrival_time, flight_departure, flight_departure_date):
