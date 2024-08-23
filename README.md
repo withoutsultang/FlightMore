@@ -9,6 +9,9 @@
 2. 수집한 항공권 가격을 기반으로 항공권 가격 추이 그래프 제공
 3. 사용자 맞춤형 추천을 통한 항공권 추천
 
+**주소
+1. figma - https://www.figma.com/design/9AdupOilq42auV5F94rGkL/%ED%99%94%EB%A9%B4-%EB%94%94%EC%9E%90%EC%9D%B8?node-id=0-1&t=gSU1SsezyKrTaTAP-1
+
 
 ---
 
