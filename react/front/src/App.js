@@ -1,7 +1,14 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 function App() {
+  const navigate = useNavigate();
+  const handleLogin = () => {
+    /* (임시)main으로 이동 */
+    navigate('/main');
+  };
+
   return (
     <Container>
       <LeftColumn>
@@ -16,7 +23,7 @@ function App() {
           <p>알림 받아보기</p>
           <p>▼</p>
         </SmallText>
-        <Button>네이버 로그인</Button>
+        <Button onClick={handleLogin}>네이버 로그인</Button>
       </LeftColumn>
       <RightColumn>
         {/* 캡쳐 화면 이미지 */}
