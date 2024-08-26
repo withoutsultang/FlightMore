@@ -23,7 +23,7 @@ function App() {
           <p>알림 받아보기</p>
           <p>▼</p>
         </SmallText>
-        <Button onClick={handleLogin}>네이버 로그인</Button>
+        <LoginButton onClick={handleLogin}>네이버 로그인</LoginButton>
       </LeftColumn>
       <RightColumn>
         {/* 캡쳐 화면 이미지 */}
@@ -86,15 +86,19 @@ const Image = styled.div`
   height: 500px;
   background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 추가 */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
-const Button = styled.button`
+const LoginButton = styled.button`
   padding: 10px 20px;
   font-size: 1em;
-  color: #fff;
-  background-color: #28a745; /* 초록색 버튼 */
+  color: white;
+  background-color: #3cc73c;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+
+  &:hover {
+    background-color: #34a53471;
+  }
 `;
