@@ -81,20 +81,21 @@ def main():
     db = Database()
 
     departures = 'ICN'
-    arrivals = 'TYO'
-    departure_date = '20240918'
-    arrival_date = '20240920'
+    arrivals = ['TYO', 'KIX', 'NGO', 'FUK', 'CTS']  # 여러 도착지 설정
+    departure_date = '20240618' # 추후 수정
+    arrival_date = '20240620' # 추후 수정
     adult = 1
     child = 0
 
-    url = (f"https://flight.naver.com/flights/international/"
-           f"{departures}-{arrivals}-{departure_date}/{arrivals}-{departures}-{arrival_date}"
-           f"?adult={adult}&child={child}&isDirect=true&fareType=Y")
-
     try:
-        flight_data = crawl_flight_data(driver, url, departure_date, db)
-        if flight_data:
-            db.insert_flight_data_batch(flight_data)
+        for arrival in arrivals:
+            url = (f"https://flight.naver.com/flights/international/"
+                   f"{departures}-{arrival}-{departure_date}/{arrival}-{departures}-{arrival_date}"
+                   f"?adult={adult}&child={child}&isDirect=true&fareType=Y")
+
+            flight_data = crawl_flight_data(driver, url, departure_date, db)
+            if flight_data:
+                db.insert_flight_data_batch(flight_data)
     except Exception as e:
         print(f"오류 발생: {e}")
     finally:
