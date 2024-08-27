@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
-import image from '../components/image';
+import image from '../components/Image';
 import NotificationSettings from './NotificationSetting';
 import SetAlarms from './SetAlarms';
 import TelegramConnection from './TelegramConnection';

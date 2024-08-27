@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
+import Slide from './components/Slide';
 
 function App() {
   const navigate = useNavigate();
@@ -26,8 +27,7 @@ function App() {
         <LoginButton onClick={handleLogin}>네이버 로그인</LoginButton>
       </LeftColumn>
       <RightColumn>
-        {/* 캡쳐 화면 이미지 */}
-        <Image></Image>
+        <Image><Slide /></Image>
       </RightColumn>
     </Container>
   );
