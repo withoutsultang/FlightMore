@@ -70,9 +70,8 @@ const InfoContainer = styled.div`
   max-width: 70%;
   height: 100%;
   max-height: 80%;
-  margin-top: 20px;
-    margin-bottom: 10%;
-  padding-right: 40px;
+  margin: 20px 0px 0px 10%;
+  padding: 0px 40px 0px 0px;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
