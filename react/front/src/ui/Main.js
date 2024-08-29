@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import image from '../components/Image';
 import CSS from '../styles/MainCSS';
-import NotificationSettings from './NotificationSetting';
-import SetAlarms from './SetAlarms';
-import TelegramConnection from './TelegramConnection';
+import Setting from './SetNotify';
+import List from './NotifyList';
+import Telegram from './ConnTelegram';
 
 function Main() {
     const navigate = useNavigate();
-    const [activeSection, setActiveSection] = useState('notificationSettings');
+    const [activeSection, setActiveSection] = useState('setting');
 
     //로그아웃 시 페이지 이동(임시) 추후 수정 필요
     const handleLogout = () => {
@@ -25,20 +25,20 @@ function Main() {
               <CSS.ProfileName>김건우</CSS.ProfileName>
             </CSS.Profile>
             <CSS.SidebarItem
-                active={activeSection === 'notificationSettings'}
-                onClick={() => setActiveSection('notificationSettings')}>알림 설정</CSS.SidebarItem>
+                active={activeSection === 'setting'}
+                onClick={() => setActiveSection('setting')}>알림 설정</CSS.SidebarItem>
             <CSS.SidebarItem
-              active={activeSection === 'setAlarms'}
-              onClick={() => setActiveSection('setAlarms')}>설정된 알람</CSS.SidebarItem>
+              active={activeSection === 'list'}
+              onClick={() => setActiveSection('list')}>알람 목록</CSS.SidebarItem>
             <CSS.SidebarItem
               active={activeSection === 'telegram'}
               onClick={() => setActiveSection('telegram')}>텔레그램 연결</CSS.SidebarItem>
             <CSS.Logout><CSS.LogoutButton onClick={handleLogout}>로그아웃</CSS.LogoutButton></CSS.Logout>
           </CSS.Sidebar>
           <CSS.Content>
-            {activeSection === 'notificationSettings' && <NotificationSettings />}
-            {activeSection === 'setAlarms' && <SetAlarms />}
-            {activeSection === 'telegram' && <TelegramConnection />}
+            {activeSection === 'setting' && <Setting />}
+            {activeSection === 'list' && <List />}
+            {activeSection === 'telegram' && <Telegram />}
           </CSS.Content>
         </CSS.InfoContainer>
       </CSS.Container>

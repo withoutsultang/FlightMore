@@ -10,14 +10,14 @@ const Container = styled.div`
     overflow-y: auto;
 `;
 
-const AlarmContainer = styled.div`
+const NotifyContainer = styled.div`
     display: flex;
     align-items: center;
     margin: 10px 0;
     width: 100%;
 `;
 
-const AlarmBox = styled.div`
+const NotifyBox = styled.div`
     background-color: #f9f4e7;
     border: 1px solid #dcdcdc;
     border-radius: 5px;
@@ -49,8 +49,8 @@ const DeleteButton = styled.button`
 
 const CSS = {
     Container,
-    AlarmContainer,
-    AlarmBox,
+    NotifyContainer,
+    NotifyBox,
     Row,
     Text,
     DeleteButton,

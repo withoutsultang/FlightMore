@@ -1,8 +1,10 @@
 import React from "react";
-import CSS from '../styles/AlarmCSS';
+import CSS from '../styles/ListCSS';
+import Tostify from '../components/Tostify';
+import { ToastContainer } from "react-toastify";
 
-const SetAlarms = () => {
-    const alarmData = [
+const NotifyList = () => {
+    const notifyData = [
         {
             from: "인천(ICN)",
             to: "도쿄(TYO)",
@@ -37,25 +39,30 @@ const SetAlarms = () => {
         }
     ];
 
+    const handleDeleteClick = () => {
+        Tostify.Error('알림이 삭제되었습니다.');
+    };
+
     return (
         <CSS.Container>
-            {alarmData.map((alarm, i) => (
-                <CSS.AlarmContainer key={i}>
-                    <CSS.AlarmBox>
+            {notifyData.map((data, i) => (
+                <CSS.NotifyContainer key={i}>
+                    <CSS.NotifyBox>
                         <CSS.Row>
-                            <CSS.Text>{alarm.from} ➡️ {alarm.to}</CSS.Text>
-                            <CSS.Text>{alarm.departure} ➡️ {alarm.return}</CSS.Text>
+                            <CSS.Text>{data.from} ➡️ {data.to}</CSS.Text>
+                            <CSS.Text>{data.departure} ➡️ {data.return}</CSS.Text>
                         </CSS.Row>
                         <CSS.Row>
-                            <CSS.Text>가격 {alarm.price}</CSS.Text>
-                            <CSS.Text>인원 {alarm.people}</CSS.Text>
+                            <CSS.Text>가격 {data.price}</CSS.Text>
+                            <CSS.Text>인원 {data.people}</CSS.Text>
                         </CSS.Row>
-                    </CSS.AlarmBox>
-                    <CSS.DeleteButton>&#10060;</CSS.DeleteButton>
-                </CSS.AlarmContainer>
+                    </CSS.NotifyBox>
+                    <CSS.DeleteButton onClick={handleDeleteClick}>&#10060;</CSS.DeleteButton>
+                    <ToastContainer />
+                </CSS.NotifyContainer>
             ))}
         </CSS.Container>
     );
 };
 
-export default SetAlarms;
+export default NotifyList;

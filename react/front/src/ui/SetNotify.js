@@ -1,13 +1,19 @@
 import React, { useState } from "react";
-import CSS from '../styles/NotificationCSS';
+import CSS from '../styles/NotifyCSS';
+import Tostify from '../components/Tostify';
+import { ToastContainer } from "react-toastify";
 
-const NotificationSettings = () => {
+const SetNotify = () => {
     const [departureDate, setDepartureDate] = useState('');
     const [arrivalDate, setArrivalDate] = useState('');
     const [departureLocation, setDepartureLocation] = useState('서');
     const [arrivalLocation, setArrivalLocation] = useState('');
     const [priceRange, setPriceRange] = useState('');
     const [numPeople, setNumPeople] = useState('1');
+
+    const handleRegisterClick = () => {
+        Tostify.Success('알림이 등록되었습니다.');
+    };
 
     return (
         <div>
@@ -38,9 +44,10 @@ const NotificationSettings = () => {
                 </CSS.Select>
                 <CSS.NumberInput type="number" min="1" value={numPeople} onChange={(e) => setNumPeople(e.target.value)} />명
             </CSS.InfoRow>
-            <CSS.RegisterButton>등록하기</CSS.RegisterButton>
+            <CSS.RegisterButton onClick={handleRegisterClick}>등록하기</CSS.RegisterButton>
+            <ToastContainer />
         </div>
     );
 };
 
-export default NotificationSettings;
+export default SetNotify;
