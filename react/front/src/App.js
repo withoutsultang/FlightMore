@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import Slide from './components/Slide';
+import LoginImage from './assets/images/btnG_login.png';
 
 function App() {
   const navigate = useNavigate();
@@ -24,7 +25,9 @@ function App() {
           <p>알림 받아보기</p>
           <p>▼</p>
         </SmallText>
-        <LoginButton onClick={handleLogin}>네이버 로그인</LoginButton>
+        <LoginButton onClick={handleLogin}>
+          <img src={LoginImage} alt="네이버 로그인" />
+        </LoginButton>
       </LeftColumn>
       <RightColumn>
         <Image><Slide /></Image>
@@ -90,15 +93,10 @@ const Image = styled.div`
 `;
 
 const LoginButton = styled.button`
-  padding: 10px 20px;
-  font-size: 1em;
-  color: white;
-  background-color: #3cc73c;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #34a53471;
+  background-color: transparent;
+  img{
+    width: 150px;
+    height: 40px;
   }
 `;

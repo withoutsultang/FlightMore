@@ -5,6 +5,7 @@ import CSS from '../styles/MainCSS';
 import Setting from './SetNotify';
 import List from './NotifyList';
 import Telegram from './ConnTelegram';
+import LogoutImage from '../assets/images/btnG_logout.png';
 
 function Main() {
     const navigate = useNavigate();
@@ -33,7 +34,9 @@ function Main() {
             <CSS.SidebarItem
               active={activeSection === 'telegram'}
               onClick={() => setActiveSection('telegram')}>텔레그램 연결</CSS.SidebarItem>
-            <CSS.Logout><CSS.LogoutButton onClick={handleLogout}>로그아웃</CSS.LogoutButton></CSS.Logout>
+            <CSS.Logout><CSS.LogoutButton onClick={handleLogout}>
+                <img src={LogoutImage} alt="로그아웃"/>
+            </CSS.LogoutButton></CSS.Logout>
           </CSS.Sidebar>
           <CSS.Content>
             {activeSection === 'setting' && <Setting />}

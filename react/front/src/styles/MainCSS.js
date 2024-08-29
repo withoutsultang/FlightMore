@@ -80,15 +80,11 @@ const Logout = styled.div`
 `;
 
 const LogoutButton = styled.button`
-  padding: 10px 20px;
-  background-color: #3cc73c;
-  color: white;
+  background-color: transparent;
   border: none;
-  border-radius: 5px;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #34a53471;
+  img{
+    width: 120px;
+    height: 40px;
   }
 `;
 
