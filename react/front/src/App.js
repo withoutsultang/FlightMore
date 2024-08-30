@@ -99,4 +99,8 @@ const LoginButton = styled.button`
     width: 150px;
     height: 40px;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 `;

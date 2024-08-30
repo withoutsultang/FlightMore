@@ -86,6 +86,10 @@ const LogoutButton = styled.button`
     width: 120px;
     height: 40px;
   }
+  
+  &:hover {
+    cursor: pointer;
+  }
 `;
 
 const Content = styled.div`
