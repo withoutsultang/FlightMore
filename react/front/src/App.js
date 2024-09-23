@@ -1,39 +1,47 @@
-import React from 'react';
+import React, {useState} from 'react';
 import styled from 'styled-components';
-import { useNavigate } from 'react-router-dom';
+import {Routes, Route} from 'react-router-dom';
 import Slide from './components/Slide';
 import LoginImage from './assets/images/btnG_login.png';
+import NaverRedirectPage from './NaverRedirectPage';
+import Main from './Main';
 
 function App() {
-  const navigate = useNavigate();
-  const handleLogin = () => {
-    /* (임시)main으로 이동 */
-    navigate('/main');
-  };
+    const [user, setUser] = useState(null);
+    const handleLogin = () => {
+        /* 스프링으로 이동 */
+        window.location.href = 'http://localhost:8080/login/naver';
+    }
 
-  return (
-    <Container>
-      <LeftColumn>
-        <Title>항공권모아</Title>
-        <Description>
-          <p>항공권 특가 정보 실시간 제공</p>
-          <p>편리한 가격 추이 그래프</p>
-          <p>맞춤형 항공권까지</p>
-        </Description>
-        <SmallText>
-          <p>지금 바로</p>
-          <p>알림 받아보기</p>
-          <p>▼</p>
-        </SmallText>
-        <LoginButton onClick={handleLogin}>
-          <img src={LoginImage} alt="네이버 로그인" />
-        </LoginButton>
-      </LeftColumn>
-      <RightColumn>
-        <Image><Slide /></Image>
-      </RightColumn>
-    </Container>
-  );
+    return (
+            <Routes>
+                <Route path={"/"} element={
+                    <Container>
+                        <LeftColumn>
+                            <Title>항공권모아</Title>
+                            <Description>
+                                <p>항공권 특가 정보 실시간 제공</p>
+                                <p>편리한 가격 추이 그래프</p>
+                                <p>맞춤형 항공권까지</p>
+                            </Description>
+                            <SmallText>
+                                <p>지금 바로</p>
+                                <p>알림 받아보기</p>
+                                <p>▼</p>
+                            </SmallText>
+                            <LoginButton onClick={handleLogin}>
+                                <img src={LoginImage} alt="네이버 로그인" />
+                            </LoginButton>
+                        </LeftColumn>
+                        <RightColumn>
+                            <Image><Slide /></Image>
+                        </RightColumn>
+                    </Container>
+                }/>
+                <Route path={"/login/redirected/naver"} element={<NaverRedirectPage setUser={setUser}/>} />
+                <Route path="/Main" element={<Main user={user} />} />
+            </Routes>
+    );
 }
 
 export default App;

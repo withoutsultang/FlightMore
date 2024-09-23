@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import image from '../components/Image';
-import CSS from '../styles/MainCSS';
-import Setting from './SetNotify';
-import List from './NotifyList';
-import Telegram from './ConnTelegram';
-import LogoutImage from '../assets/images/btnG_logout.png';
+import image from './components/Image';
+import CSS from './styles/MainCSS';
+import Setting from './ui/SetNotify';
+import List from './ui/NotifyList';
+import Telegram from './ui/ConnTelegram';
+import LogoutImage from './assets/images/btnG_logout.png';
 
-function Main() {
+function Main({user}) {
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState('setting');
 
@@ -22,8 +22,8 @@ function Main() {
         <CSS.InfoContainer>
           <CSS.Sidebar>
             <CSS.Profile>
-              <CSS.ProfileImage src={image.img1} alt="프로필 이미지" />
-              <CSS.ProfileName>김건우</CSS.ProfileName>
+              <CSS.ProfileImage src={user?.profileImageUrl || image.img1} alt="프로필 이미지" />
+              <CSS.ProfileName>{user?.name || "guest"}</CSS.ProfileName>
             </CSS.Profile>
             <CSS.SidebarItem
                 active={activeSection === 'setting'}
