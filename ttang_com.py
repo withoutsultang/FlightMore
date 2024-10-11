@@ -30,28 +30,34 @@ def scroll_to_bottom(driver):
 def extract_flight_info(driver, index):
     try:
         # 출발지와 도착지 정보 추출
-        starting = driver.find_element(By.CSS_SELECTOR, 'div.optWay > span:nth-child(1) > strong').text
+        starting = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.optWay > span:nth-child(1) > strong'))).text
         destination = driver.find_element(By.CSS_SELECTOR, 'div.optWay > span:nth-child(3) > strong').text
 
         flight_info = []
         exair2_elements = driver.find_elements(By.CLASS_NAME, 'exair2')
 
         for i in range(1, len(exair2_elements) + 1):
+            airline = driver.find_element(By.CSS_SELECTOR, "body > div.layerLoadWrap > div > div > div.lyContWrap.lyc_exairScedule.srch_result.fixTopScroll > div:nth-child(1) > div > div.abtLogo > span").text
             departure_date = driver.find_element(By.CSS_SELECTOR, f"#id_detail_result > li:nth-child({i}) > div > div.airScdInfo3 > ul > li:nth-child(1)").text
             return_date = driver.find_element(By.CSS_SELECTOR, f"#id_detail_result > li:nth-child({i}) > div > div.airScdInfo3 > ul > li:nth-child(2)").text
             validity_period = driver.find_element(By.CSS_SELECTOR, f"#id_detail_result > li:nth-child({i}) > div > div.airScdInfo3 > ul > li:nth-child(3)").text
             opt_seat = driver.find_element(By.CSS_SELECTOR, f"#id_detail_result > li:nth-child({i}) > div > div.airScdInfo3 > strong").text
             price = driver.find_element(By.CSS_SELECTOR, f"#id_detail_result > li:nth-child({i}) > div > div.wrapMore > div.wrapMoreTop > p > span.priceWrap.fc_red > span").text.replace(",", "")
-            outbound_flight_number = driver.find_element(By.CSS_SELECTOR, f"#div_sche_{i} > div:nth-child(1) > div > div.groupB > p.optPCode").text
+            # 상세일정 보기
+            element = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"#div_title_{i}")))
+            driver.execute_script("arguments[0].click();", element)
+
+            outbound_flight_number = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, f"#div_sche_{i} > div:nth-child(1) > div > div.groupB > p.optPCode"))).text
             outbound_departure_time = driver.find_element(By.CSS_SELECTOR, f"#div_sche_{i} > div:nth-child(1) > div > div.groupA.absL > p.optTime > strong").text
             inbound_flight_number = driver.find_element(By.CSS_SELECTOR, f"#div_sche_{i} > div:nth-child(2) > div > div.groupB > p.optPCode").text
             inbound_departure_time = driver.find_element(By.CSS_SELECTOR, f"#div_sche_{i} > div:nth-child(2) > div > div.groupA.absL > p.optTime > strong").text
 
             flight_info.append({
-                "starting": starting,
-                "destination": destination,
-                "departure_date": departure_date,
-                "return_date": return_date,
+                "airline": airline,
+                "arrival_airport": starting,
+                "departure_airport": destination,
+                "arrival_time": departure_date,
+                "departure_time": return_date,
                 "validity_period": validity_period,
                 "opt_seat": opt_seat,
                 "price": int(price),
@@ -94,9 +100,8 @@ def main():
 
                 flight_info = extract_flight_info(driver, index)
                 if flight_info:
-                    for flight in flight_info:
-                        if not db.is_duplicate(flight):
-                            db.insert_flight_data(flight)
+                    # 추출된 항공편 정보를 배치로 처리하여 삽입 또는 업데이트
+                    db.insert_or_update_flight_data_batch(flight_info)
 
                 # 뒤로 가기
                 back_button = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.lyHeaderWrap > a')))
@@ -114,6 +119,7 @@ def main():
         end_time = time.time()
         total_time = end_time - start_time
         print(f"총 실행 시간: {total_time:.2f}초")
+
 
 if __name__ == "__main__":
     main()

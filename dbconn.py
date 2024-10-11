@@ -19,26 +19,52 @@ class Database:
             print(f"데이터베이스 연결 실패: {e}")
             raise
 
-    def insert_flight_data_batch(self, flight_data_batch):
+    def insert_or_update_flight_data_batch(self, flight_data_batch):
         insert_query = '''
-        INSERT INTO fm_flight (flight_number, flight_airline, flight_arrival, flight_arrival_time, flight_departure, flight_departure_date, flight_time, flight_price)
-        VALUES (%(flight_number)s, %(airline)s, %(arrival_airport)s, %(arrival_time)s, %(departure_airport)s, %(departure_time)s, %(flight_time)s, %(price)s)
+        INSERT INTO fm_flight (flight_number, flight_airline, flight_arrival, flight_arrival_date, flight_departure, flight_departure_date, flight_price, flight_site, created_date)
+        VALUES (%(flight_number)s, %(airline)s, %(arrival_airport)s, %(arrival_time)s, %(departure_airport)s, %(departure_time)s, %(price)s, %(site)s, %(created_date)s)
         '''
+        update_query = '''
+        UPDATE fm_flight 
+        SET flight_price = %(price)s, updated_date = %(updated_date)s
+        WHERE flight_airline = %(airline)s 
+        AND flight_arrival = %(arrival_airport)s 
+        AND flight_arrival_date = %(arrival_time)s 
+        AND flight_departure = %(departure_airport)s 
+        AND flight_departure_date = %(departure_time)s
+        '''
+
         try:
             with self.pool.connection() as conn:
                 with conn.cursor() as cur:
-                    cur.executemany(insert_query, flight_data_batch)
-                conn.commit()
-            print(f"{len(flight_data_batch)}개의 항공편 데이터가 삽입되었습니다.")
+                    for flight_data in flight_data_batch:
+                        is_duplicate, existing_price = self.is_duplicate(
+                            flight_data['airline'],
+                            flight_data['arrival_airport'],
+                            flight_data['arrival_time'],
+                            flight_data['departure_airport'],
+                            flight_data['departure_time']
+                        )
+
+                        if is_duplicate:
+                            if flight_data['price'] != existing_price:
+                                flight_data['updated_date'] = datetime.now()  # 업데이트 날짜 추가
+                                cur.execute(update_query, flight_data)
+                                print(f"항공편 업데이트: {flight_data['flight_number']} - 가격 변경 {existing_price} -> {flight_data['price']}")
+                        else:
+                            cur.execute(insert_query, flight_data)
+                            print(f"새 항공편 삽입: {flight_data['flight_number']}")
+
+                    conn.commit()
         except psycopg.Error as e:
-            print(f"데이터 삽입 실패: {e}")
+            print(f"데이터 삽입/업데이트 실패: {e}")
 
     def is_duplicate(self, flight_airline, flight_arrival, flight_arrival_time, flight_departure, flight_departure_date):
         check_query = '''
-        SELECT COUNT(*) FROM fm_flight 
+        SELECT flight_price FROM fm_flight 
         WHERE flight_airline = %s 
         AND flight_arrival = %s 
-        AND flight_arrival_time = %s 
+        AND flight_arrival_date = %s 
         AND flight_departure = %s 
         AND flight_departure_date = %s;
         '''
@@ -46,11 +72,14 @@ class Database:
             with self.pool.connection() as conn:
                 with conn.cursor() as cur:
                     cur.execute(check_query, (flight_airline, flight_arrival, flight_arrival_time, flight_departure, flight_departure_date))
-                    count = cur.fetchone()[0]
-                    return count > 0
+                    result = cur.fetchone()
+                    if result:
+                        return True, result[0]  # 중복 항공편과 기존 가격 반환
+                    else:
+                        return False, None
         except psycopg.Error as e:
             print(f"중복 체크 실패: {e}")
-            return False
+            return False, None
 
     def close(self):
         try:
@@ -58,6 +87,7 @@ class Database:
             print("PostgreSQL 연결이 종료되었습니다.")
         except psycopg.Error as e:
             print(f"연결 종료 실패: {e}")
+
 
 if __name__ == "__main__":
     db = Database()
