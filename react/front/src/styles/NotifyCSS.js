@@ -18,6 +18,7 @@ const Input = styled.input`
     padding: 8px;
     border: none;
     border-radius: 5px;
+    text-align: center;
 `;
 
 const Select = styled.select`

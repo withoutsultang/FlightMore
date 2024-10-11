@@ -15,7 +15,7 @@ public class SecurityConfig {
         http
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/login/naver","/login/callback/naver").permitAll()
+                                .requestMatchers("/login/naver","/login/callback/naver","/api/notify/**").permitAll()
                                 // /login/naver and /callback/naver 경로에 대한 접근 허용
                                 .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )

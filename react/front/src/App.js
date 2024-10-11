@@ -1,17 +1,27 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
-import {Routes, Route} from 'react-router-dom';
+import {Routes, Route, Navigate} from 'react-router-dom';
 import Slide from './components/Slide';
 import LoginImage from './assets/images/btnG_login.png';
 import NaverRedirectPage from './NaverRedirectPage';
 import Main from './Main';
 
 function App() {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        // 로컬 스토리지에서 사용자 정보 가져오기
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser) : null;
+    });
     const handleLogin = () => {
         /* 스프링으로 이동 */
         window.location.href = 'http://localhost:8080/login/naver';
     }
+
+    const handleLogout = () => {
+        // 로그아웃 시 로컬 스토리지에서 사용자 정보 삭제
+        localStorage.removeItem('user');
+        setUser(null);
+    };
 
     return (
             <Routes>
@@ -39,7 +49,7 @@ function App() {
                     </Container>
                 }/>
                 <Route path={"/login/redirected/naver"} element={<NaverRedirectPage setUser={setUser}/>} />
-                <Route path="/Main" element={<Main user={user} />} />
+                <Route path="/Main" element={user ? <Main user={user} handleLogout={handleLogout} /> : <Navigate to="/" replace />} />
             </Routes>
     );
 }

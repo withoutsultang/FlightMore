@@ -10,16 +10,20 @@ const NaverRedirectPage = ({setUser}) => {
     try{
       const response = await axios.get(`http://localhost:8080/login/callback/naver?code=${code}`);
       const data = response.data;
-      console.log("로그인 성공:", data);
       setUser({
+        memberId: data.id,
         name: data.name,
         nickname: data.nickname,
         email: data.email,
         profileImageUrl: data.profileImageUrl,
       })
+      console.log(data)
+
+      // 로컬 스토리지에 사용자 정보 저장
+      localStorage.setItem('user', JSON.stringify(data));
+
       navigate("/Main");
     } catch (error){
-      console.error("로그인 오류:", error);
       alert("로그인 실패: " + error);
       navigate("/fail");
     }
@@ -29,7 +33,6 @@ const NaverRedirectPage = ({setUser}) => {
     const searchParams = new URLSearchParams(location.search);
     const code = searchParams.get('code');
     if(code){
-      console.log("Naver 로그인 CODE = " + code);
       handleNaverLogin(code);
     }
   }, [location]);

@@ -7,13 +7,15 @@ import List from './ui/NotifyList';
 import Telegram from './ui/ConnTelegram';
 import LogoutImage from './assets/images/btnG_logout.png';
 
-function Main({user}) {
+function Main({user, handleLogout}) {
     const navigate = useNavigate();
     const [activeSection, setActiveSection] = useState('setting');
 
-    //로그아웃 시 페이지 이동(임시) 추후 수정 필요
-    const handleLogout = () => {
-        navigate('/');
+    const handleLogoutClick = () => {
+        // 로컬 스토리지에서 사용자 정보 삭제
+        localStorage.removeItem('user');
+        handleLogout(); // App.js에서 handleLogout 호출
+        navigate('/'); // 홈 페이지로 리다이렉트
     };
 
     return (
@@ -34,7 +36,7 @@ function Main({user}) {
             <CSS.SidebarItem
               active={activeSection === 'telegram'}
               onClick={() => setActiveSection('telegram')}>텔레그램 연결</CSS.SidebarItem>
-            <CSS.Logout><CSS.LogoutButton onClick={handleLogout}>
+            <CSS.Logout><CSS.LogoutButton onClick={handleLogoutClick}>
                 <img src={LogoutImage} alt="로그아웃"/>
             </CSS.LogoutButton></CSS.Logout>
           </CSS.Sidebar>

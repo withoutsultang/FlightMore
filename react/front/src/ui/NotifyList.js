@@ -1,66 +1,63 @@
-import React from "react";
+import React, {useEffect} from "react";
 import CSS from '../styles/ListCSS';
 import Tostify from '../components/Tostify';
 import { ToastContainer } from "react-toastify";
 
 const NotifyList = () => {
-    const notifyData = [
-        {
-            from: "인천(ICN)",
-            to: "도쿄(TYO)",
-            departure: "2024-09-05",
-            return: "2024-09-08",
-            price: "0 ~ 250,000원",
-            people: "1명"
-        },
-        {
-            from: "인천(ICN)",
-            to: "오사카(KIX)",
-            departure: "2024-09-05",
-            return: "2024-09-08",
-            price: "0 ~ 250,000원",
-            people: "1명"
-        },
-        {
-            from: "부산(PUS)",
-            to: "후쿠오카(FUK)",
-            departure: "2024-09-05",
-            return: "2024-09-08",
-            price: "0 ~ 250,000원",
-            people: "1명"
-        },
-        {
-            from: "부산(PUS)",
-            to: "후쿠오카(FUK)",
-            departure: "2024-09-05",
-            return: "2024-09-08",
-            price: "0 ~ 250,000원",
-            people: "1명"
-        }
-    ];
+    const [notifyData, setNotifyData] = React.useState([]);
 
-    const handleDeleteClick = () => {
-        Tostify.Error('알림이 삭제되었습니다.');
+    const getUserId = () => {
+        const storedUser = localStorage.getItem('user');
+        return storedUser ? JSON.parse(storedUser).id : null;
+    }
+
+    const getNotifyData = async () => {
+        const memberId = getUserId();
+        if(memberId){
+            try{
+                const response = await axios.get(`http://localhost:8080/api/notify/${memberId}`);
+                setNotifyData(response.data);
+            } catch (error){
+                Tostify.Error('알림 목록을 불러오는데 실패했습니다.');
+            }
+        } else {
+            Tostify.Error('사용자 정보를 찾을 수 없습니다.');
+        }
+    }
+
+    const handleDeleteClick = async (noticationId) => {
+        try{
+            await axios.delete(`http://localhost:8080/api/notify/${noticationId}`);
+            Tostify.Success('알림이 삭제되었습니다.');
+            getNotifyData();
+        } catch (error){
+            Tostify.Error('알림 삭제에 실패했습니다.');
+        }
     };
+
+    useEffect(() => {
+        getNotifyData();
+    }, []);
 
     return (
         <CSS.Container>
-            {notifyData.map((data, i) => (
+            {notifyData.length > 0 ? notifyData.map((data, i) => (
                 <CSS.NotifyContainer key={i}>
                     <CSS.NotifyBox>
                         <CSS.Row>
-                            <CSS.Text>{data.from} ➡️ {data.to}</CSS.Text>
-                            <CSS.Text>{data.departure} ➡️ {data.return}</CSS.Text>
+                            <CSS.Text>{data.departureLocation} ➡️ {data.arrivalLocation}</CSS.Text>
+                            <CSS.Text>{data.departureDate} ➡️ {data.arrivalDate}</CSS.Text>
                         </CSS.Row>
                         <CSS.Row>
-                            <CSS.Text>가격 {data.price}</CSS.Text>
-                            <CSS.Text>인원 {data.people}</CSS.Text>
+                            <CSS.Text>가격 {data.minPrice} ~ {data.maxPrice}</CSS.Text>
+                            <CSS.Text>인원 {data.numPeople}</CSS.Text>
                         </CSS.Row>
                     </CSS.NotifyBox>
-                    <CSS.DeleteButton onClick={handleDeleteClick}>&#10060;</CSS.DeleteButton>
+                    <CSS.DeleteButton onClick={() => handleDeleteClick(data.notificationId)}>&#10060;</CSS.DeleteButton>
                     <ToastContainer />
                 </CSS.NotifyContainer>
-            ))}
+            )): <CSS.EmptyText>등록된 알림이 없습니다.</CSS.EmptyText>}
+
         </CSS.Container>
     );
 };
