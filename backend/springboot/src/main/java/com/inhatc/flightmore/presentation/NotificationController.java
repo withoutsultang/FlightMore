@@ -72,7 +72,9 @@ public class NotificationController {
                         entity.getArrivalLocation(),
                         entity.getMinPrice(),
                         entity.getMaxPrice(),
-                        entity.getNumPeople()))
+                        entity.getNumPeople(),
+                        entity.getId()))
+
                 .toList();
 
         return ResponseEntity.ok(notifications);
@@ -93,7 +95,8 @@ public class NotificationController {
                         entity.getArrivalLocation(),
                         entity.getMinPrice(),
                         entity.getMaxPrice(),
-                        entity.getNumPeople()))
+                        entity.getNumPeople(),
+                        entity.getId()))
                 .toList();
 
         return ResponseEntity.ok(notifications);

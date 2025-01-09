@@ -16,5 +16,6 @@ public record Notification(
         String arrivalLocation,
         int minPrice,
         int maxPrice,
-        int numPeople
+        int numPeople,
+        Long id
 ) {}

@@ -46,6 +46,7 @@ public class NotificationEntity {
     public int getMinPrice() { return minPrice; }
     public int getMaxPrice() { return maxPrice; }
     public int getNumPeople() { return numPeople; }
+    public Long getId() { return id; }
 
     // Setters (필요하면 추가)
 }

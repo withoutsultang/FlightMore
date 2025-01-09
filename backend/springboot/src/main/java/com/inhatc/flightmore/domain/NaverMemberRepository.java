@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface NaverMemberRepository extends JpaRepository<NaverMember, Long> {
     Optional<NaverMember> findByNaverId(NaverId naverId);
+
+    Optional<NaverMember> findByTelegramCode(String telegramCode);
 }
