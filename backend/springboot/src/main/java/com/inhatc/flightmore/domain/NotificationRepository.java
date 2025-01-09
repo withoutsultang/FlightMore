@@ -20,5 +20,7 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     // 특정 회원의 알림 목록 조회
     List<NotificationEntity> findByMemberId(Long memberId);
+
+    List<NotificationEntity> findBydepartureDate(LocalDate departureDate);
 }
 

@@ -31,6 +31,10 @@ public class NaverMember{
     private String nickname;
     private String profileImageUrl;
 
+    // Telegram 연동을 위한 필드 추가
+    private String chatId;       // Telegram 채팅 ID
+    private String telegramCode; // 사용자가 연동을 위해 입력하는 무작위 코드
+
     @Override
     public String toString() {
         return "NaverMember{" +
@@ -40,6 +44,8 @@ public class NaverMember{
                 ", name='" + name + '\'' +
                 ", nickname='" + nickname + '\'' +
                 ", profileImageUrl='" + profileImageUrl + '\'' +
+                ", chatId='" + chatId + '\'' +
+                ", telegramCode='" + telegramCode + '\'' +
                 '}';
     }
 
@@ -65,6 +71,15 @@ public class NaverMember{
 
     public String profileImageUrl() {
         return profileImageUrl;
+    }
+
+    // chatId와 telegramCode에 대한 Setter 추가
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
+    }
+
+    public void setTelegramCode(String telegramCode) {
+        this.telegramCode = telegramCode;
     }
 }
 

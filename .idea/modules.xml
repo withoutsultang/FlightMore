@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/FlightMore.iml" filepath="$PROJECT_DIR$/.idea/FlightMore.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/flightmore.main.iml" filepath="$PROJECT_DIR$/.idea/modules/flightmore.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/react/front/front.iml" filepath="$PROJECT_DIR$/react/front/front.iml" />
     </modules>
   </component>
 </project>

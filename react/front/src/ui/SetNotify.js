@@ -106,7 +106,7 @@ const SetNotify = () => {
                 <CSS.Label>도착</CSS.Label>
                 <CSS.Input type="date" value={arrivalDate} onChange={(e) => setArrivalDate(e.target.value)} />
                 <CSS.Select value={arrivalLocation} onChange={(e) => setArrivalLocation(e.target.value)}>
-                    <option value="TYO">도쿄(TYO)</option>
+                    <option value="NRT">도쿄(NRT)</option>
                     <option value="KIX">오사카(KIX)</option>
                     <option value="FUK">후쿠오카(FUK)</option>
                     <option value="CTS">삿포로(CTS)</option>
