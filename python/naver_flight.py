@@ -55,10 +55,10 @@ def send_data(flight_data):
     except Exception as e:
         logging.error(f"데이터 전송 중 오류 발생: {e}")
 
-def init_webdriver():
+def init_webdriver(driver_path):
     option = webdriver.ChromeOptions()
     option.add_argument("--headless")
-    driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=option)
+    driver = webdriver.Chrome(service=ChromeService(driver_path), options=option)
     return driver
 
 
@@ -121,8 +121,10 @@ def extract_flight_data(flight, departure_date, arrival_date, url):
 
 
 
-def crawl_flight_data(url, departure_date, arrival_date, driver):
+def crawl_flight_data(url, departure_date, arrival_date, driver_path):
+    driver = None
     try:
+        driver = init_webdriver(driver_path)
         driver.get(url)
         driver.implicitly_wait(2)
         wait_for_element(driver, By.CSS_SELECTOR, '#container > div.priceGraph_PriceGraph__HsePr')
@@ -132,13 +134,16 @@ def crawl_flight_data(url, departure_date, arrival_date, driver):
         flight_data = []
         for flight in flights:
             data = extract_flight_data(flight, departure_date, arrival_date, url)
-
-            flight_data.append(data)
+            if data is not None:
+                flight_data.append(data)
 
         return flight_data
     except Exception as e:
         logging.error(f"크롤링 중 오류 발생: {e}. URL: {url}")
         return []
+    finally:
+        if driver is not None:
+            driver.quit()
 
 
 def main():
@@ -149,11 +154,10 @@ def main():
         logging.info("조회된 알림이 없습니다.")
         return
 
-    driver = init_webdriver()  # 드라이버를 한 번만 생성
-
     all_flight_data = []
 
     try:
+        driver_path = ChromeDriverManager().install()
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
             for notification in notifications:
@@ -166,7 +170,7 @@ def main():
                 url = (f"https://flight.naver.com/flights/international/"
                        f"{departures}-{arrival}-{departure_date}/{arrival}-{departures}-{arrival_date}"
                        f"?adult={adult}&isDirect=true&fareType=Y")
-                futures.append(executor.submit(crawl_flight_data, url, departure_date, arrival_date, driver))
+                futures.append(executor.submit(crawl_flight_data, url, departure_date, arrival_date, driver_path))
 
             for future in futures:
                 flight_data = future.result()
@@ -174,7 +178,6 @@ def main():
                     all_flight_data.extend(flight_data)
         if all_flight_data:
             logging.info(f"총 수집된 항공 데이터 수: {len(all_flight_data)}")
-            print(all_flight_data[1])
             send_data(all_flight_data)
         else:
             logging.info("수집된 항공 데이터가 없습니다.")
@@ -182,7 +185,6 @@ def main():
     except Exception as e:
         logging.error(f"메인 실행 중 오류 발생: {e}")
     finally:
-        driver.quit()
         end_time = time.time()
         total_time = end_time - start_time
         logging.info(f"네이버 항공권 크롤링 완료. 소요 시간: {total_time:.2f}초")

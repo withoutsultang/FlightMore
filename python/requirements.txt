@@ -1,0 +1,5 @@
+requests>=2.32
+selenium>=4.20
+webdriver-manager>=4
+python-dotenv>=1
+psycopg[binary,pool]>=3.1
