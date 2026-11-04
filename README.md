@@ -6,6 +6,8 @@
 
 인하공업전문대학 전공심화 SW융합프로젝트 I·II · 2024
 
+**[최종 프로젝트 구현과 README · `tof`](https://github.com/withoutsultang/FlightMore/tree/tof)** — 네이버 로그인, 항공편 수집·저장, Telegram 연결·해제와 가격 알림이 포함된 브랜치입니다. 이 `master` README에는 샘플 데이터로 실행하는 로컬 포트폴리오 데모를 정리했습니다.
+
 ## 45초 데모 영상
 
 **[▶ FlightMore 데모 영상 보기 (MP4)](docs/flightmore-demo.mp4)**
