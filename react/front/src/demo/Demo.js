@@ -8,7 +8,8 @@ const defaults = {
 };
 const labels = {ICN: '인천 (ICN)', NRT: '도쿄 나리타 (NRT)', KIX: '오사카 간사이 (KIX)'};
 const money = value => `${new Intl.NumberFormat('ko-KR').format(value)}원`;
-const endpoint = 'http://127.0.0.1:8081/api/demo/alerts';
+const demoApi = 'http://127.0.0.1:8081/api/demo';
+const endpoint = `${demoApi}/alerts`;
 
 export default function Demo() {
     const [params, setParams] = useSearchParams();
@@ -17,6 +18,23 @@ export default function Demo() {
     const [alert, setAlert] = useState(null);
     const [error, setError] = useState('');
     const [busy, setBusy] = useState(false);
+    const [telegram, setTelegram] = useState(null);
+    const [telegramError, setTelegramError] = useState('');
+    const [telegramBusy, setTelegramBusy] = useState(false);
+
+    useEffect(() => {
+        const controller = new AbortController();
+        fetch(`${demoApi}/telegram`, {signal: controller.signal})
+            .then(response => {
+                if (!response.ok) throw new Error();
+                return response.json();
+            })
+            .then(setTelegram)
+            .catch(error => {
+                if (error.name !== 'AbortError') setTelegramError('Telegram 모의 연결 상태를 불러오지 못했습니다.');
+            });
+        return () => controller.abort();
+    }, []);
 
     useEffect(() => {
         if (!id) return;
@@ -61,6 +79,23 @@ export default function Demo() {
     }
 
     const best = alert?.matches[0];
+
+    async function changeTelegram(path, payload) {
+        setTelegramBusy(true);
+        setTelegramError('');
+        try {
+            const response = await fetch(`${demoApi}${path}`, {
+                method: 'POST',
+                ...(payload && {headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload)}),
+            });
+            if (!response.ok) throw new Error();
+            setTelegram(await response.json());
+        } catch {
+            setTelegramError('처리하지 못했습니다. 연결 상태와 매칭 결과를 확인해 주세요.');
+        } finally {
+            setTelegramBusy(false);
+        }
+    }
     return (
         <main className="fm-demo">
             <header>
@@ -84,6 +119,25 @@ export default function Demo() {
                         <button type="submit" disabled={busy}>{busy ? '저장 중…' : '조건 저장 및 항공권 찾기'}</button>
                     </form>
                     {error && <p role="alert" className="fm-error">{error}</p>}
+                    <div className="fm-preview">
+                        <h2>Telegram 알림 · 로컬 시뮬레이션</h2>
+                        <p aria-live="polite">{telegram ? (telegram.connected ? '모의 연결 완료' : '연결되지 않음') : '연결 상태 확인 중'}</p>
+                        <div className="fm-telegram-actions">
+                            <button type="button" disabled={!telegram || telegramBusy}
+                                onClick={() => changeTelegram('/telegram', {connected: !telegram.connected})}>
+                                {telegram?.connected ? '모의 연결 해제' : 'Telegram 모의 연결'}
+                            </button>
+                            <button type="button" disabled={!telegram?.connected || !best || telegramBusy}
+                                onClick={() => changeTelegram(`/alerts/${alert.id}/telegram`)}>
+                                최저가 알림 모의 발송
+                            </button>
+                        </div>
+                        {telegramError && <p role="alert" className="fm-error">{telegramError}</p>}
+                        {telegram?.lastMessage && <div aria-live="polite" className="fm-telegram-message">
+                            <strong>로컬에 저장된 마지막 메시지</strong>
+                            <p>{telegram.lastMessage}</p>
+                        </div>}
+                    </div>
                 </section>
                 <section className="fm-card" aria-live="polite">
                     <h2>02. 매칭 결과</h2>

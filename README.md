@@ -39,6 +39,10 @@ npm start
 
 이 데모는 로컬 H2 데이터베이스에 조건을 저장합니다. 서버를 종료하면 세션 데이터가 초기화되며, 샘플 항공편과 알림 미리보기에는 외부 계정이나 API 키가 필요 없습니다.
 
+**Telegram 알림도 재현할 수 있습니다.** 조건을 저장한 뒤 **Telegram 모의 연결 → 최저가 알림 모의 발송**을 누르면, Spring API가 최저가 항공편으로 메시지를 만들어 H2에 저장합니다. 모의 연결 해제와 마지막 메시지 재조회도 가능합니다. 메시지는 데모 화면에 표시됩니다.
+
+![Telegram 모의 연결 후 최저가 항공편 메시지가 로컬에 저장된 데모 화면](docs/telegram-local-demo.png)
+
 | 데모 구성 | 코드 |
 | --- | --- |
 | React 조건 입력·결과·미리보기 | [Demo.js](react/front/src/demo/Demo.js) |
@@ -52,6 +56,15 @@ npm start
 | **네이버 로그인** | 인증 요청과 콜백, 토큰 교환, 회원 정보 조회를 Spring Boot와 React 화면에 연결 | [로그인 연동](https://github.com/withoutsultang/FlightMore/commit/65395cd) |
 | **개인 알림 설정** | 여행 조건 입력·알림 목록·삭제 화면을 구현하고 Spring REST API와 JPA 저장 모델을 연결 | [알림 기능](https://github.com/withoutsultang/FlightMore/commit/2b2b1d9) |
 | **항공권 수집 배치** | 저장된 알림 조건으로 조회 URL을 만들고, Selenium 수집 작업을 병렬로 실행해 결과를 묶어 전송하는 흐름 작성 | [수집 배치](https://github.com/withoutsultang/FlightMore/commit/6f9ab0c) |
+| **Telegram 연동·가격 알림** | 인증코드로 Telegram 채팅을 회원에 연결하고, 저장한 조건에 맞는 항공편을 가격순으로 골라 메시지 발송 요청에 연결 | [최종 매칭·발송 코드](https://github.com/withoutsultang/FlightMore/blob/tof/backend/springboot/src/main/java/com/inhatc/flightmore/application/AlertService.java) |
+
+### Telegram 최종 구현 소스
+
+최종 구현은 `tof` 브랜치에 있습니다. 당시에는 **인증코드 생성 → 봇 메시지에서 코드 확인 → 회원과 채팅 연결 → 조건에 맞는 항공편 발송** 흐름을 구현했습니다.
+
+- [인증코드 발급·채팅 연결·해제](https://github.com/withoutsultang/FlightMore/blob/tof/backend/springboot/src/main/java/com/inhatc/flightmore/application/TelegramIntegrationService.java)
+- [봇 메시지 확인과 연결 처리](https://github.com/withoutsultang/FlightMore/blob/tof/backend/springboot/src/main/java/com/inhatc/flightmore/application/TelegramUpdateService.java)
+- [항공권 매칭과 Telegram 발송 요청](https://github.com/withoutsultang/FlightMore/blob/tof/backend/springboot/src/main/java/com/inhatc/flightmore/application/AlertService.java)
 
 최종 발표 자료에는 **조건 알림 목록과 Telegram 연결·항공권 알림 메시지 2건**을 담았습니다. 아래 캡처에서 인천–도쿄 항공권의 일정·가격·조회 링크를 한 메시지에 전달하는 구성을 볼 수 있습니다.
 

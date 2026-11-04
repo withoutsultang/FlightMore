@@ -4,6 +4,7 @@ import com.inhatc.flightmore.domain.NotificationEntity;
 import com.inhatc.flightmore.domain.NotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,7 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @Profile("demo")
-@RequestMapping("/api/demo/alerts")
+@RequestMapping("/api/demo")
 class DemoAlertController {
     private static final long DEMO_MEMBER = 1L;
     private final NotificationRepository notifications;
@@ -23,7 +24,7 @@ class DemoAlertController {
         this.jdbc = jdbc;
     }
 
-    @PostMapping
+    @PostMapping("/alerts")
     @ResponseStatus(HttpStatus.CREATED)
     Alert create(@RequestBody Condition condition) {
         if (!validAirport(condition.departure()) || !validAirport(condition.destination())
@@ -38,10 +39,46 @@ class DemoAlertController {
                 condition.destination(), 0, condition.maxPrice(), condition.passengers())));
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/alerts/{id}")
     Alert get(@PathVariable long id) {
         return notifications.findById(id).filter(alert -> alert.getMemberId() == DEMO_MEMBER)
                 .map(this::response).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/telegram")
+    TelegramState telegram() {
+        return jdbc.queryForObject("SELECT connected, last_message FROM demo_telegram WHERE id = 1",
+                (rs, row) -> new TelegramState(rs.getBoolean("connected"), rs.getString("last_message")));
+    }
+
+    @PostMapping("/telegram")
+    TelegramState setTelegram(@RequestBody TelegramConnection connection) {
+        jdbc.update("UPDATE demo_telegram SET connected = ? WHERE id = 1", connection.connected());
+        return telegram();
+    }
+
+    @PostMapping("/alerts/{id}/telegram")
+    TelegramState simulateTelegram(@PathVariable long id) {
+        Alert alert = get(id);
+        if (alert.matches().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "매칭된 항공편이 없습니다.");
+        }
+        Flight flight = alert.matches().get(0);
+        Condition condition = alert.condition();
+        String message = String.format(Locale.KOREA, """
+                항공권 알림 · %s → %s
+                일정: %s ~ %s
+                항공편: %s
+                가격: 1인 %,d원 · %d명""",
+                condition.departure(), condition.destination(), condition.departureDate(), condition.returnDate(),
+                flight.code(), flight.pricePerPerson(), condition.passengers());
+        int updated = jdbc.update("""
+                UPDATE demo_telegram SET last_message = ? WHERE id = 1 AND connected = TRUE
+                """, message);
+        if (updated == 0) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Telegram 모의 연결이 필요합니다.");
+        }
+        return new TelegramState(true, message);
     }
 
     private Alert response(NotificationEntity alert) {
@@ -66,4 +103,6 @@ class DemoAlertController {
                      LocalDate returnDate, int maxPrice, int passengers) {}
     record Flight(String code, String airline, int pricePerPerson, int seats) {}
     record Alert(long id, Condition condition, List<Flight> matches) {}
+    record TelegramConnection(boolean connected) {}
+    record TelegramState(boolean connected, String lastMessage) {}
 }

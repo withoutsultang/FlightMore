@@ -29,4 +29,12 @@
 .fm-flights small { display: block; }
 .fm-preview { padding: 16px; background: #eaf7f5; border-radius: 12px; margin-top: 20px; }
 .fm-error { color: #a62234; }
+.fm-telegram-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.fm-telegram-actions button {
+    background: #145f84; color: #fff; border: 0; border-radius: 8px;
+    padding: 10px 12px; font: inherit; cursor: pointer;
+}
+.fm-telegram-actions button:disabled { opacity: .5; cursor: default; }
+.fm-telegram-message { margin-top: 16px; }
+.fm-telegram-message p { white-space: pre-line; }
 @media (max-width: 720px) { .fm-grid { grid-template-columns: 1fr; } }

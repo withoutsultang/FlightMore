@@ -16,3 +16,11 @@ INSERT INTO demo_flight VALUES
     ('FM104', 'FlightMore Air', 'ICN', 'NRT', '2027-05-12', '2027-05-16', 175000, 1),
     ('FM201', 'FlightMore Air', 'ICN', 'KIX', '2027-05-12', '2027-05-16', 175000, 4),
     ('FM202', 'FlightMore Air', 'ICN', 'NRT', '2027-05-13', '2027-05-16', 175000, 4);
+
+CREATE TABLE demo_telegram (
+    id INTEGER PRIMARY KEY,
+    connected BOOLEAN NOT NULL,
+    last_message VARCHAR(1000)
+);
+
+INSERT INTO demo_telegram (id, connected) VALUES (1, FALSE);

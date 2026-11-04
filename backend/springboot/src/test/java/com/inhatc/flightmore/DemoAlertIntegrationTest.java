@@ -58,4 +58,22 @@ class DemoAlertIntegrationTest {
         mvc.perform(get(API + "/999999")).andExpect(status().isNotFound());
         mvc.perform(get("/login/naver")).andExpect(status().isForbidden());
     }
+
+    @Test
+    void simulatesTelegramConnectionAndStoresLowestPriceMessage() throws Exception {
+        String telegram = "/api/demo/telegram";
+        String body = mvc.perform(post(API).contentType(MediaType.APPLICATION_JSON).content(CONDITION))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString();
+        long id = mapper.readTree(body).path("id").asLong();
+        mvc.perform(post(API + "/" + id + "/telegram")).andExpect(status().isConflict());
+        mvc.perform(post(telegram).contentType(MediaType.APPLICATION_JSON).content("{\"connected\":true}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.connected").value(true));
+        mvc.perform(post(API + "/" + id + "/telegram"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.lastMessage").value(org.hamcrest.Matchers.containsString("FM101")));
+        mvc.perform(post(telegram).contentType(MediaType.APPLICATION_JSON).content("{\"connected\":false}"))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.connected").value(false));
+        mvc.perform(get(telegram)).andExpect(status().isOk())
+                .andExpect(jsonPath("$.lastMessage").value(org.hamcrest.Matchers.containsString("189,000원")));
+    }
 }
