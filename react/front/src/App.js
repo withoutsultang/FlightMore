@@ -5,6 +5,7 @@ import Slide from './components/Slide';
 import LoginImage from './assets/images/btnG_login.png';
 import NaverRedirectPage from './NaverRedirectPage';
 import Main from './Main';
+import Demo from './demo/Demo';
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -25,6 +26,7 @@ function App() {
 
     return (
             <Routes>
+                {process.env.REACT_APP_FLIGHTMORE_DEMO === 'true' && <Route path="/demo" element={<Demo />} />}
                 <Route path={"/"} element={
                     <Container>
                         <LeftColumn>

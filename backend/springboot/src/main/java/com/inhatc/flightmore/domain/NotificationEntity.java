@@ -38,6 +38,7 @@ public class NotificationEntity {
     }
 
     // Getters (필요하면 추가)
+    public Long getId() { return id; }
     public Long getMemberId() { return memberId; }
     public LocalDate getDepartureDate() { return departureDate; }
     public LocalDate getArrivalDate() { return arrivalDate; }

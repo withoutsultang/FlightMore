@@ -6,6 +6,39 @@
 
 인하공업전문대학 전공심화 SW융합프로젝트 I·II · 2024
 
+## 로컬 포트폴리오 데모
+
+**알림 조건 등록 → Spring API 저장 → 샘플 항공권 SQL 조회 → 최저가 알림 미리보기**를 브라우저에서 체험할 수 있습니다. 기본 조건은 인천–도쿄 왕복 2인과 1인 상한가 23만 원입니다. 저장하면 2건이 가격순으로 표시되고, 18만 9천 원 항공편이 미리보기에 들어갑니다.
+
+![FlightMore 로컬 데모에서 저장된 알림 조건, 항공권 두 건과 최저가 미리보기를 보여주는 화면](docs/local-demo.png)
+
+Java 17과 Node.js를 설치한 뒤 터미널 두 개를 엽니다.
+
+```powershell
+# 터미널 1 · 저장소 루트에서 시작
+cd backend/springboot
+.\gradlew.bat demoBootRun
+```
+
+```powershell
+# 터미널 2 · 저장소 루트에서 시작
+cd react/front
+npm ci
+$env:REACT_APP_FLIGHTMORE_DEMO = 'true'
+$env:HOST = '127.0.0.1'
+npm start
+```
+
+브라우저에서 `http://127.0.0.1:3000/demo`를 열고 **조건 저장 및 항공권 찾기**를 누릅니다. 상한가를 10만 원으로 바꾸면 매칭 결과가 0건인 경우도 확인할 수 있습니다.
+
+이 데모는 로컬 H2 데이터베이스에 조건을 저장합니다. 서버를 종료하면 세션 데이터가 초기화되며, 샘플 항공편과 알림 미리보기에는 외부 계정이나 API 키가 필요 없습니다.
+
+| 데모 구성 | 코드 |
+| --- | --- |
+| React 조건 입력·결과·미리보기 | [Demo.js](react/front/src/demo/Demo.js) |
+| 조건 저장·항공편 매칭 API | [DemoAlertController.java](backend/springboot/src/main/java/com/inhatc/flightmore/demo/DemoAlertController.java) |
+| 항공편 샘플·API/DB 통합 테스트 | [demo-flights.sql](backend/springboot/src/main/resources/demo-flights.sql) · [DemoAlertIntegrationTest.java](backend/springboot/src/test/java/com/inhatc/flightmore/DemoAlertIntegrationTest.java) |
+
 ## 제가 구현한 부분
 
 | 기능 | 구현 내용 | Git 근거 |
